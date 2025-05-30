@@ -1,9 +1,9 @@
 import boto3
 
 REGION = "us-east-1"
-S3_BUCKET = "datasetproject3"
-SCRIPT_1 = f"s3://{S3_BUCKET}/scripts/step1_clean.py"
-SCRIPT_2 = f"s3://{S3_BUCKET}/scripts/step2_analytics.py"
+S3_BUCKET = "benitezbuckets3"
+SCRIPT_1 = f"s3://{S3_BUCKET}/scripts/step-1-cleaning.py"
+SCRIPT_2 = f"s3://{S3_BUCKET}/scripts/step-2-processing.py"
 INSTANCE_TYPE = "m5.xlarge"
 INSTANCE_COUNT = 3
 
@@ -57,7 +57,7 @@ def run_steps():
                 'InstanceGroups': [
                     {
                         'InstanceCount': 1,
-                        'InstanceGroupType': 'TASK',
+                        'InstanceRole': 'TASK',
                         'Name': 'Tarea - 1',
                         'InstanceType': 'm5.xlarge',
                         'EbsConfiguration': {
@@ -74,7 +74,7 @@ def run_steps():
                     },
                     {
                         'InstanceCount': 1,
-                        'InstanceGroupType': 'MASTER',
+                        'InstanceRole': 'MASTER',
                         'Name': 'Principal',
                         'InstanceType': 'm5.xlarge',
                         'EbsConfiguration': {
@@ -91,7 +91,7 @@ def run_steps():
                     },
                     {
                         'InstanceCount': 1,
-                        'InstanceGroupType': 'CORE',
+                        'InstanceRole': 'CORE',
                         'Name': 'Central',
                         'InstanceType': 'm5.xlarge',
                         'EbsConfiguration': {
@@ -131,9 +131,10 @@ def run_steps():
                     }
                 }
             ],
+            Steps = steps,
             AutoScalingRole='arn:aws:iam::526595352865:role/EMR_AutoScaling_DefaultRole',
             ScaleDownBehavior='TERMINATE_AT_TASK_COMPLETION',
             AutoTerminationPolicy={'IdleTimeout': 3600},
-            VisibleToAllUsers=True
+            VisibleToAllUsers=True,
         )
         print(f"Nuevo clúster lanzado con ID: {response['JobFlowId']}")
