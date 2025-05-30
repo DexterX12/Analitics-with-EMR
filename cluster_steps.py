@@ -54,7 +54,59 @@ def run_steps():
                 'Ec2KeyName': 'vockey',
                 'EmrManagedMasterSecurityGroup': 'sg-04118f901003fb38c',
                 'EmrManagedSlaveSecurityGroup': 'sg-0b4708aa5749b3945',
-                'InstanceGroups': [ ... ],  # Usa los grupos definidos en la conversión
+                'InstanceGroups': [
+                    {
+                        'InstanceCount': 1,
+                        'InstanceGroupType': 'TASK',
+                        'Name': 'Tarea - 1',
+                        'InstanceType': 'm5.xlarge',
+                        'EbsConfiguration': {
+                            'EbsBlockDeviceConfigs': [
+                                {
+                                    'VolumeSpecification': {
+                                        'VolumeType': 'gp2',
+                                        'SizeInGB': 32
+                                    },
+                                    'VolumesPerInstance': 2
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        'InstanceCount': 1,
+                        'InstanceGroupType': 'MASTER',
+                        'Name': 'Principal',
+                        'InstanceType': 'm5.xlarge',
+                        'EbsConfiguration': {
+                            'EbsBlockDeviceConfigs': [
+                                {
+                                    'VolumeSpecification': {
+                                        'VolumeType': 'gp2',
+                                        'SizeInGB': 32
+                                    },
+                                    'VolumesPerInstance': 2
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        'InstanceCount': 1,
+                        'InstanceGroupType': 'CORE',
+                        'Name': 'Central',
+                        'InstanceType': 'm5.xlarge',
+                        'EbsConfiguration': {
+                            'EbsBlockDeviceConfigs': [
+                                {
+                                    'VolumeSpecification': {
+                                        'VolumeType': 'gp2',
+                                        'SizeInGB': 32
+                                    },
+                                    'VolumesPerInstance': 2
+                                }
+                            ]
+                        }
+                    }
+                ],  # Usa los grupos definidos en la conversión
                 'KeepJobFlowAliveWhenNoSteps': True,
                 'TerminationProtected': False
             },
