@@ -1,4 +1,5 @@
 
+
 ## Materia: ST0263-251
 Integrantes del proyecto:
 
@@ -24,9 +25,10 @@ Durante la actividad, se realizaron los objetivos especificados en el proyecto p
  - [x] Automatización de los procesos de ETL
  - [x] Consulta y visualización de datos procesados
 
+Para este proyecto, el equipo ha elegido el dataset de `OpenBank`, el cual posee diferentes indicadores mundiales y numerosas categorías en el desarrollo humano. El caso de estudio para este proyecto se ha concentrado en comparar el promedio de tasa de mortalidad de diferentes grupos (género, adultos, infantes) según cada país.
 # 2. Arquitectura y diseño
 Para esta actividad, se realizó el procesamiento de los datos utilizando una arquitectura basada en los servicios de AWS, como se muestra en la siguiente figura:
-![Spark Data Processing in AWS](https://i.imgur.com/gHN3cq4.png)
+![Spark Data Processing in AWS](https://i.imgur.com/H0uhNG1.png)
 
 Una máquina EC2 se encarga de realizar fetching del dataset de manera periódica a través de un cron job, realizando ingesta de los datos hacia S3 en una zona denominada `raw`, para su posterior procesamiento.
 
@@ -109,9 +111,9 @@ Luego de esto, se coloca el siguiente comando para configurar scripts:
 
 Se abrirá el archivo donde se encuentran los scripts línea por línea, se agrega el siguiente contenido:
 
-    */5 * * * * /usr/bin/python3 /home/ubuntu/Analitics-with-EMR/cron_job.py >> /home/ubuntu/cron_logs.txt 2>&1
+    */20 * * * * /usr/bin/python3 /home/ubuntu/Analitics-with-EMR/cron_job.py >> /home/ubuntu/cron_logs.txt 2>&1
 
-Esto especifica que cada 5 minutos se ejecutará el script de Python que obtiene los archivos del dataset, los sube a S3 y crea el cluster/le envía los steps; creará un log con el contenido de la ejecución de los scripts de Python.
+Esto especifica que cada 20 minutos se ejecutará el script de Python que obtiene los archivos del dataset, los sube a S3 y crea el cluster/le envía los steps; creará un log con el contenido de la ejecución de los scripts de Python.
 
 #### Monitorización
 Se puede ver el estado de cada job enviado por el cron previamente configurado.
@@ -133,8 +135,50 @@ Esto muestra en tiempo real los `steps` o `jobs` que se están realizando/se han
 
 #### Consulta con Athena
 
+Las consultas a los archivos `Apache Parquet` se pueden realizar a través de Athena utilizando `SQL`. En este repositorio, dentro del directorio `athena/`, se encuentran los scripts de creación de base de datos y una consulta de prueba.
+
+Es necesario configurar inicialmente el lugar donde las queries se guardarán:
+
+![Athena Settings](https://i.imgur.com/Yl86s5j.png)
+
+ ![Athena Query Example](https://i.imgur.com/ijGh3ze.png)
+
+#### Consulta a través de API
+
+Se creó un servicio de consulta de datos a través de API mediante API Gateway y la máquina EC2 que ya utiliza Streamlit para generar un reporte visual. Dentro del directorio `api/` se encuentra el servicio realizado en `flask`.
+
+![API Routes](https://i.imgur.com/SrJ2pGQ.png)
+
+
+Este posee las siguientes URL de consulta:
+
+* [https://tijsdla2h9.execute-api.us-east-1.amazonaws.com/default/available-data-columns](https://tijsdla2h9.execute-api.us-east-1.amazonaws.com/default/available-data-columns): Obtiene los nombres de las columnas disponibles para realizar consulta de los datos.
+* [https://tijsdla2h9.execute-api.us-east-1.amazonaws.com/default/all-countries-data-column?](https://tijsdla2h9.execute-api.us-east-1.amazonaws.com/default/all-countries-data-column?column=): Utilizando el parámetro de petición `column`, se especifica la columna de datos que se quiere consultar, obteniendo los datos de todos los países del dataset para esa columna en específico. La columna de datos a especificar se puede conocer mediante la ruta anterior.
 
 #### Visualización con Streamlit
+Además de poder consultar la información mediante Athena y por API, se utilizó `Streamlit`, una librería de Python que permite generar sitios web con ámbito en los datos.
+
+Dentro de la misma máquina donde se ha clonado este repositorio para el `cron`, se encuentra el directorio `streamlit/` con el script para correr el servicio. Las librerías para poder ejecutarlo también estarán presentes en el `requirements.txt` del proyecto.
+
+Estando en el directorio, se ejecuta un screen para que este se mantenga ejecutando todo el tiempo:
+
+    screen -S nombre_de_la_screen
+
+Después, se ejecuta el servicio:
+
+    streamlit run main.py
+
+Estará ejecutándose en la IP de la máquina en el puerto 8501
+
+![Streamlit server](https://i.imgur.com/9IzpZiu.png)
+
+
+![Visualización de los datos](https://i.imgur.com/aot4oIX.png)
+
+
+En el dataset analizado, se puede observar como la tasa de mortalidad y esperanza de vida es muy variable por país/continente, y esto tiene que ver con la calidad de vida y acceso a los recursos de dichos países.
+
+
 
 # Referencias
 Islam, S. (2021, 12 de diciembre). Running Spark on Local Machine - Shariful Islam - Medium. _Medium_. https://medium.com/@sharifuli/running-spark-on-local-machine-c38957d022f4
