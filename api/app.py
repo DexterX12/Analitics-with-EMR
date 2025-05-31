@@ -68,15 +68,12 @@ def get_all_countries_data_column():
         }), 404
 
     df_to_return = df_full[[COUNTRY_COLUMN_NAME, matched_data_column]]
-    result_data = df_to_return.to_dict(orient='records') # to_dict es más directo para Flask
+    result_data = df_to_return.to_dict(orient='records')
     return jsonify({
         'requested_data_column': matched_data_column,
         'data': result_data
     })
 
 if __name__ == '__main__':
-    # Para desarrollo local en EC2 (accede por IP_EC2:5000)
     app.run(host='0.0.0.0', port=80, debug=True)
-    # Para producción, usarías un servidor WSGI como Gunicorn:
-    # gunicorn --bind 0.0.0.0:8000 app_ec2:app
     pass

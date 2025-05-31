@@ -1,0 +1,8 @@
+boto3
+s3fs
+requests
+streamlit
+pandas
+pyarrow
+pyspark
+flask
