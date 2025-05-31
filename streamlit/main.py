@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
-import pyarrow # o fastparquet
-import matplotlib # Para interactuar con S3
-# import matplotlib.pyplot as plt # Descomenta si vas a usar el histograma con matplotlib
+import pyarrow
 
 # Configuración de la página (opcional)
 st.set_page_config(layout="wide", page_title="Visualizador Parquet desde S3")
