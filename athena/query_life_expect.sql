@@ -1,0 +1,1 @@
+select country,  "avg life expectancy at birth, total (years)"  from "AwsDataCatalog"."athena"."tabla" where "avg life expectancy at birth, total (years)" < 70;
